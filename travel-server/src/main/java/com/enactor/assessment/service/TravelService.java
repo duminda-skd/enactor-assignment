@@ -1,8 +1,12 @@
 package com.enactor.assessment.service;
 
-import com.enactor.assessment.dto.AvailabilityDto;
+import com.enactor.assessment.dto.AvailabilityOutBoundDto;
+import com.enactor.assessment.dto.ReservationOutBoundDto;
+import com.enactor.assessment.dto.AvailabilityInboundDto;
 
 public interface TravelService {
 
-	AvailabilityDto checkAvailability(String origin, String destination, int passengers);
+	AvailabilityOutBoundDto checkAvailability(AvailabilityInboundDto availabilityInbound);
+
+	ReservationOutBoundDto reserveSeats(AvailabilityInboundDto availabilityInbound);
 }

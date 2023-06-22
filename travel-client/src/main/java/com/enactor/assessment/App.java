@@ -20,9 +20,13 @@ public class App {
 			InputService inputService = new InputServiceImpl();
 			Map<String, String> availabilityParams = inputService.getAvailabilityInput(myScanner);
 			
-			// working on checking availability
 			TravelService travelService = new TravelServiceImpl();
+
+			// working on checking availability
 			travelService.doAvailabilityCheck(availabilityParams);
+			// working on reservation
+			boolean userConfirmed = inputService.getUserConfirmationForReservation(myScanner);
+			travelService.doTicketReserve(availabilityParams);
 			
 			// working on getting availability input
 			terminate = inputService.evalTermination(myScanner);	

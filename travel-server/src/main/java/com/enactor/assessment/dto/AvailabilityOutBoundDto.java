@@ -1,6 +1,6 @@
 package com.enactor.assessment.dto;
 
-public class AvailabilityDto {
+public class AvailabilityOutBoundDto {
 
 	private boolean success;
 	private String errorMessage;
@@ -68,7 +68,7 @@ public class AvailabilityDto {
 
 	@Override
 	public String toString() {
-		return "AvailabilityDto [success=" + success + ", errorMessage=" + errorMessage + ", date=" + date + ", origin="
+		return "AvailabilityOutBoundDto [success=" + success + ", errorMessage=" + errorMessage + ", date=" + date + ", origin="
 				+ origin + ", destination=" + destination + ", passengers=" + passengers + ", price=" + price + "]";
 	}
 }

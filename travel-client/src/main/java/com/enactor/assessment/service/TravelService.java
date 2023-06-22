@@ -7,5 +7,5 @@ public interface TravelService {
 
 	void doAvailabilityCheck(Map<String, String> availabilityParams);
 
-	void doTicketReserve();
+	void doTicketReserve(Map<String, String> availabilityParams);
 }

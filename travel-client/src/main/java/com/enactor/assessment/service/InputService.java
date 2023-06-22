@@ -7,5 +7,7 @@ public interface InputService {
 	
 	Map<String, String> getAvailabilityInput(Scanner myScanner);
 
+	boolean getUserConfirmationForReservation(Scanner myScanner);
+	
 	boolean evalTermination(Scanner myScanner);
 }
