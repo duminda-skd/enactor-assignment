@@ -1,13 +1,18 @@
 package com.enactor.assessment.dto;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 public class SeatInfo {
 
+	private ReadWriteLock lock;
 	private int departureJourneyBookedSeats;
 	private int arrivalJourneyBookedSeats;
 	private String departureJourneyTime;
 	private String arrivalJourneyTime;
 	
 	public SeatInfo() {
+		this.lock = new ReentrantReadWriteLock();
 		this.departureJourneyTime = "05:00";
 		this.arrivalJourneyTime = "17:00";
 	}
@@ -34,5 +39,9 @@ public class SeatInfo {
 
 	public String getArrivalJourneyTime() {
 		return arrivalJourneyTime;
+	}
+
+	public ReadWriteLock getLock() {
+		return lock;
 	}
 }

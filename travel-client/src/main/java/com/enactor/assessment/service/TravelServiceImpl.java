@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TravelServiceImpl implements TravelService, AvailabilityAndReservationConstants {
 
 	@Override
-	public void doAvailabilityCheck(Map<String, String> availabilityParams) {
+	public AvailabilityDto doAvailabilityCheck(Map<String, String> availabilityParams) {
 		String urlWithParams = getModifiedUrlWithParams(availabilityParams);
 		System.out.println("url with params: " + urlWithParams);
 		AvailabilityDto response = null;
@@ -34,9 +34,11 @@ public class TravelServiceImpl implements TravelService, AvailabilityAndReservat
 					.send(httpRequest, new JsonBodyHandler<AvailabilityDto>(AvailabilityDto.class))
 					.body();
 			System.out.println("response: " + response);
+			return response;
 		} catch (IOException | InterruptedException | URISyntaxException ex) {
 			// ex.printStackTrace();
 			System.out.println(ERROR_PROCESSING_REQUEST);
+			return new AvailabilityDto();
 		}
 	}
 

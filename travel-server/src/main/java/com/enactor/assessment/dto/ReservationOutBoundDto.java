@@ -3,6 +3,8 @@ package com.enactor.assessment.dto;
 import java.util.List;
 
 public class ReservationOutBoundDto {
+	private boolean success;
+	private String errorMessage;
 	private String origin;
 	private String destination;
 	private int passengers;
@@ -12,6 +14,22 @@ public class ReservationOutBoundDto {
 	private List<String> seatList;
 	private String bookingReferece;
 	
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
 	public String getOrigin() {
 		return origin;
 	}
@@ -78,8 +96,9 @@ public class ReservationOutBoundDto {
 
 	@Override
 	public String toString() {
-		return "ReservationOutBoundDto [origin=" + origin + ", destination=" + destination + ", passengers="
-				+ passengers + ", price=" + price + ", journeyDate=" + journeyDate + ", journeyStartTime="
-				+ journeyStartTime + ", seatList=" + seatList + ", bookingReferece=" + bookingReferece + "]";
+		return "ReservationOutBoundDto [success=" + success + ", errorMessage=" + errorMessage + ", origin=" + origin
+				+ ", destination=" + destination + ", passengers=" + passengers + ", price=" + price + ", journeyDate="
+				+ journeyDate + ", journeyStartTime=" + journeyStartTime + ", seatList=" + seatList
+				+ ", bookingReferece=" + bookingReferece + "]";
 	}
 }

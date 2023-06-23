@@ -2,6 +2,8 @@ package com.enactor.assessment.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.IntStream;
 
 import com.enactor.assessment.constant.JourneyType;
@@ -61,9 +63,18 @@ public class TravelServiceImpl implements TravelService, TravelConstants {
 	}
 
 	private boolean checkSeatLimitExceeding(JourneyType journeyType, int requestedSeats, SeatInfo seatInfo) {
-		int currentBookedSeats = journeyType.equals(JourneyType.DEPARTURE_JOURNEY)
-				? seatInfo.getDepartureJourneyBookedSeats()
-				: seatInfo.getArrivalJourneyBookedSeats();
+		int currentBookedSeats;
+
+		ReadWriteLock lock = seatInfo.getLock();
+		lock.readLock().lock();
+		try {
+			currentBookedSeats = journeyType.equals(JourneyType.DEPARTURE_JOURNEY)
+					? seatInfo.getDepartureJourneyBookedSeats()
+					: seatInfo.getArrivalJourneyBookedSeats();
+		} finally {
+			lock.readLock().unlock();
+		}
+
 		return currentBookedSeats + requestedSeats > SEAT_LIMIT;
 	}
 
@@ -81,40 +92,45 @@ public class TravelServiceImpl implements TravelService, TravelConstants {
 		// get journey type (departure or arrival)
 		JourneyType journeyType = determineJourneyType(availabilityInbound.getOrigin(),
 				availabilityInbound.getDestination());
+		// check if seats are available
+		boolean seatLimitExceeding = checkSeatLimitExceeding(journeyType, availabilityInbound.getPassengers(),
+				seatInfo);
+		// if not available send unsuccessful flag with error message
+		if (seatLimitExceeding) {
+			return generateUnsuccessfulReservation();
+		}
+		// do reservation
 		List<String> seatList = journeyType.equals(JourneyType.DEPARTURE_JOURNEY)
 				? blockDepartureJourney(seatInfo, availabilityInbound.getPassengers())
 				: blockArrivalJourney(seatInfo, availabilityInbound.getPassengers());
-		return generateReservationResponse(price, availabilityInbound, seatInfo, seatList, journeyType);
+		return generateReservationResponseAndSaveBooking(price, availabilityInbound, seatInfo, seatList, journeyType);
 	}
 
-	private ReservationOutBoundDto generateReservationResponse(double price, AvailabilityInboundDto availabilityInbound,
-			SeatInfo seatInfo, List<String> seatList, JourneyType journeyType) {
-		ReservationOutBoundDto reservationOutBound = new ReservationOutBoundDto();
-		reservationOutBound.setOrigin(availabilityInbound.getOrigin());
-		reservationOutBound.setDestination(availabilityInbound.getDestination());
-		reservationOutBound.setPassengers(availabilityInbound.getPassengers());
-		reservationOutBound.setPrice(price);
-		reservationOutBound.setJourneyDate(availabilityInbound.getDate());
-		reservationOutBound.setJourneyStartTime(
-				journeyType.equals(JourneyType.DEPARTURE_JOURNEY) ? seatInfo.getDepartureJourneyTime()
-						: seatInfo.getArrivalJourneyTime());
-		reservationOutBound.setSeatList(seatList);
-		return reservationOutBound;
-	}
+	
 
 	private List<String> blockDepartureJourney(SeatInfo seatInfo, int requestedSeats) {
 		System.out.println("Current seats booked for departure journey: " + seatInfo.getDepartureJourneyBookedSeats());
 
 		List<String> seatsList = new ArrayList();
 
-		IntStream.range(0, requestedSeats).forEach(ix -> {
-			int row = (seatInfo.getDepartureJourneyBookedSeats() / SEAT_LETTER_ORDER.size()) + 1;
-			int letterIx = seatInfo.getDepartureJourneyBookedSeats() % SEAT_LETTER_ORDER.size();
-			String letter = SEAT_LETTER_ORDER.get(letterIx);
-			String seatNumber = row + letter;
-			seatsList.add(seatNumber);
-			seatInfo.setDepartureJourneyBookedSeats(seatInfo.getDepartureJourneyBookedSeats() + 1);
-		});
+		ReadWriteLock lock = seatInfo.getLock();
+		lock.writeLock().lock();
+		try {
+			int currentBookedSeats = seatInfo.getDepartureJourneyBookedSeats();
+			IntStream.range(0, requestedSeats).forEach(ix -> {
+				int seatForNewBooking = currentBookedSeats + ix;
+				int row = (seatForNewBooking / SEAT_LETTER_ORDER.size()) + 1;
+				int letterIx = seatForNewBooking % SEAT_LETTER_ORDER.size();
+				String letter = SEAT_LETTER_ORDER.get(letterIx);
+				String seatNumber = row + letter;
+				seatsList.add(seatNumber);
+
+			});
+			// increment the seat number by number of requested seats
+			seatInfo.setDepartureJourneyBookedSeats(currentBookedSeats + requestedSeats);
+		} finally {
+			lock.writeLock().unlock();
+		}
 
 		System.out.println(
 				"After reservation seats booked for departure journey: " + seatInfo.getDepartureJourneyBookedSeats());
@@ -129,14 +145,23 @@ public class TravelServiceImpl implements TravelService, TravelConstants {
 
 		List<String> seatsList = new ArrayList();
 
-		IntStream.range(0, requestedSeats).forEach(ix -> {
-			int row = (seatInfo.getArrivalJourneyBookedSeats() / SEAT_LETTER_ORDER.size()) + 1;
-			int letterIx = seatInfo.getArrivalJourneyBookedSeats() % SEAT_LETTER_ORDER.size();
-			String letter = SEAT_LETTER_ORDER.get(letterIx);
-			String seatNumber = row + letter;
-			seatsList.add(seatNumber);
-			seatInfo.setArrivalJourneyBookedSeats(seatInfo.getArrivalJourneyBookedSeats() + 1);
-		});
+		ReadWriteLock lock = seatInfo.getLock();
+		lock.writeLock().lock();
+		try {
+			int currentBookedSeats = seatInfo.getArrivalJourneyBookedSeats();
+			IntStream.range(0, requestedSeats).forEach(ix -> {
+				int seatForNewBooking = currentBookedSeats + ix;
+				int row = (seatForNewBooking / SEAT_LETTER_ORDER.size()) + 1;
+				int letterIx = seatForNewBooking % SEAT_LETTER_ORDER.size();
+				String letter = SEAT_LETTER_ORDER.get(letterIx);
+				String seatNumber = row + letter;
+				seatsList.add(seatNumber);
+			});
+			// increment the seat number by number of requested seats
+			seatInfo.setArrivalJourneyBookedSeats(currentBookedSeats + requestedSeats);
+		} finally {
+			lock.writeLock().unlock();
+		}
 
 		System.out.println(
 				"After reservation seats booked for arrival journey: " + seatInfo.getArrivalJourneyBookedSeats());
@@ -144,5 +169,31 @@ public class TravelServiceImpl implements TravelService, TravelConstants {
 
 		return seatsList;
 	}
+	
+	private ReservationOutBoundDto generateUnsuccessfulReservation() {
+		ReservationOutBoundDto reservationOutBound = new ReservationOutBoundDto();
+		reservationOutBound.setSuccess(false);
+		reservationOutBound.setErrorMessage(ERROR_SEAT_LIMIT_EXCEEDED);
+		return reservationOutBound;
+	}
 
+	private ReservationOutBoundDto generateReservationResponseAndSaveBooking(double price,
+			AvailabilityInboundDto availabilityInbound, SeatInfo seatInfo, List<String> seatList,
+			JourneyType journeyType) {
+		ReservationOutBoundDto reservationOutBound = new ReservationOutBoundDto();
+		// populate data for reservation
+		reservationOutBound.setOrigin(availabilityInbound.getOrigin());
+		reservationOutBound.setDestination(availabilityInbound.getDestination());
+		reservationOutBound.setPassengers(availabilityInbound.getPassengers());
+		reservationOutBound.setPrice(price);
+		reservationOutBound.setJourneyDate(availabilityInbound.getDate());
+		reservationOutBound.setJourneyStartTime(
+				journeyType.equals(JourneyType.DEPARTURE_JOURNEY) ? seatInfo.getDepartureJourneyTime()
+						: seatInfo.getArrivalJourneyTime());
+		reservationOutBound.setSeatList(seatList);
+		reservationOutBound.setBookingReferece(UUID.randomUUID().toString());
+		// save booking data
+		SeatManagerRepoImpl.persistBookingDetails(reservationOutBound);
+		return reservationOutBound;
+	}
 }

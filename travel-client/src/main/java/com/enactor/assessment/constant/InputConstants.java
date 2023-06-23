@@ -19,5 +19,5 @@ public interface InputConstants {
 
 	String PROMPT_USER_CONFIRMATION = "Do you wish to continue to reservation with above info?"
 			+ " Enter 'y' to confirm any other character for try availability service again";
-	String USER_CONFIRMATION_FLAG = "q";
+	String USER_CONFIRMATION_FLAG = "y";
 }
