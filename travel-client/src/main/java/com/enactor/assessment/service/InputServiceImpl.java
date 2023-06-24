@@ -21,7 +21,7 @@ public class InputServiceImpl implements InputService, InputConstants {
 		String destination = myScanner.nextLine();
 		System.out.println(PROMPT_PASSENGERS);
 		String passengers = myScanner.nextLine();
-		
+
 		// Form a map of the input taken from user so that it can be processed as needed 
 		Map<String, String> availabilityParams = new HashMap();
 		availabilityParams.put(PARAM_DATE, date);

@@ -6,13 +6,16 @@ import com.enactor.assessment.dto.AvailabilityInboundDto;
 import com.enactor.assessment.service.TravelService;
 import com.enactor.assessment.service.TravelServiceImpl;
 import com.enactor.assessment.util.GenericUtil;
+import com.enactor.assessment.validator.InputValidator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 public class TravelController {
 	TravelService travelService = new TravelServiceImpl();
+	InputValidator inputValidator = new InputValidator();
 
 	public String checkAvailability(AvailabilityInboundDto availabilityInbound) throws JsonProcessingException {
+		inputValidator.validateCheckAvailabilityInput(availabilityInbound);
 		AvailabilityOutBoundDto availability = travelService.checkAvailability(availabilityInbound);
 		String availabilityResponse = GenericUtil.objectToJson(availability);
 		return availabilityResponse;
