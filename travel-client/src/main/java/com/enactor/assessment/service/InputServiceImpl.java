@@ -9,7 +9,9 @@ import com.enactor.assessment.constant.InputConstants;
 public class InputServiceImpl implements InputService, InputConstants {
 
 	@Override
-	public Map<String, String> getAvailabilityInput(Scanner myScanner) {
+	public Map<String, String> getAvailabilityInput() {
+		Scanner myScanner = new Scanner(System.in);
+		
 		System.out.println(WELCOME_MESSAGE);
 		
 		// getting input from user
@@ -33,14 +35,16 @@ public class InputServiceImpl implements InputService, InputConstants {
 	}
 	
 	@Override
-	public boolean getUserConfirmationForReservation(Scanner myScanner) {
+	public boolean getUserConfirmationForReservation() {
+		Scanner myScanner = new Scanner(System.in);
 		System.out.println(PROMPT_USER_CONFIRMATION);
 		String wantToReserve = myScanner.nextLine();
 		return wantToReserve.toLowerCase().equals(USER_CONFIRMATION_FLAG);
 	}
 
 	@Override
-	public boolean evalTermination(Scanner myScanner) {
+	public boolean evalTermination() {
+		Scanner myScanner = new Scanner(System.in);
 		System.out.println(PROMPT_TERMINATION);
 		String wantToQuit = myScanner.nextLine();
 		// if user press 'q' then send true

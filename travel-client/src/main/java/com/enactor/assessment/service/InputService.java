@@ -5,9 +5,9 @@ import java.util.Scanner;
 
 public interface InputService {
 	
-	Map<String, String> getAvailabilityInput(Scanner myScanner);
+	Map<String, String> getAvailabilityInput();
 
-	boolean getUserConfirmationForReservation(Scanner myScanner);
+	boolean getUserConfirmationForReservation();
 	
-	boolean evalTermination(Scanner myScanner);
+	boolean evalTermination();
 }

@@ -16,15 +16,16 @@ import com.enactor.assessment.validator.InputValidator;
 
 public class MainFlow implements MainFlowConstant {
 
-	public void start() {
-		Scanner myScanner = new Scanner(System.in);
+	public void start(boolean isSimulation, Map<String, String> availabilityParams) {
 		// working on getting availability input
 		InputService inputService = new InputServiceImpl();
-		Map<String, String> availabilityParams = inputService.getAvailabilityInput(myScanner);
+		if (!isSimulation) {
+			availabilityParams = inputService.getAvailabilityInput();
+		}
 		// do validation
 		doValidation(availabilityParams);
 		// working on checking availability
-		doAvailabilityCheckAndReservation(myScanner, inputService, availabilityParams);
+		doAvailabilityCheckAndReservation(isSimulation, inputService, availabilityParams);
 	}
 
 	private void doValidation(Map<String, String> availabilityParams) {
@@ -38,14 +39,20 @@ public class MainFlow implements MainFlowConstant {
 		}
 	}
 
-	private void doAvailabilityCheckAndReservation(Scanner myScanner, InputService inputService,
+	private void doAvailabilityCheckAndReservation(boolean isSimulation, InputService inputService,
 			Map<String, String> availabilityParams) {
 		TravelService travelService = new TravelServiceImpl();
 		AvailabilityDto availabilityCheck = travelService.doAvailabilityCheck(availabilityParams);
 		if (availabilityCheck.isSuccess()) {
 			System.out.println(MESSAGE_AVAILABILITY_CHECK_SUCCESS);
-			// working on reservation
-			boolean userConfirmed = inputService.getUserConfirmationForReservation(myScanner);
+			// get user confirmation (unless this is a simulation - in that case we can just consider it's true)
+			boolean userConfirmed = false;
+			if (isSimulation) {
+				userConfirmed = true;
+			} else {
+				userConfirmed = inputService.getUserConfirmationForReservation();
+			}
+			// evaluation user confirmation to proceed
 			if (userConfirmed) {
 				ReservationDto reservation = travelService.doTicketReserve(availabilityParams);
 				printReservationData(reservation);
@@ -58,6 +65,7 @@ public class MainFlow implements MainFlowConstant {
 
 	private void printReservationData(ReservationDto reservation) {
 		if (reservation.isSuccess()) {
+			System.out.println("--------------------------------------------------------");
 			System.out.println(MESSAGE_RESERVATION_SUCCESS);
 			System.out.println(RESERVATION_REFERENCE + reservation.getBookingReferece());
 			System.out.println(RESERVATION_ORIGIN + reservation.getOrigin());
@@ -66,8 +74,11 @@ public class MainFlow implements MainFlowConstant {
 			System.out.println(RESERVATION_JOURNEY_TIME + reservation.getJourneyStartTime());
 			System.out.println(RESERVATION_PRICE + reservation.getPrice());
 			System.out.println(RESERVATION_SEAT_LIST + reservation.getSeatList());
+			System.out.println("--------------------------------------------------------");
 		} else {
+			System.out.println("--------------------------------------------------------");
 			System.out.println(MESSAGE_RESERVATION_ERROR);
+			System.out.println("--------------------------------------------------------");
 		}
 	}
 }
