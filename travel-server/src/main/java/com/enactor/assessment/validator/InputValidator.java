@@ -28,7 +28,7 @@ public class InputValidator implements ValidationConstant {
 			validationFailures.add(originValidationResult);
 		}
 		InputValidationFailureResult destinationValidationResult = validateDestination(PARAM_DESTINATION,
-				availabilityInbound.getDestination());
+				availabilityInbound.getOrigin(), availabilityInbound.getDestination());
 		if (destinationValidationResult != null) {
 			validationFailures.add(destinationValidationResult);
 		}
@@ -53,9 +53,7 @@ public class InputValidator implements ValidationConstant {
 		try {
 			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_ONLY_FORMAT);
 			date = LocalDate.parse(dateStr, dateFormatter);
-			System.out.println("Parsed Date: " + date);
 		} catch (DateTimeParseException e) {
-			System.out.println("Failed to parse the date: " + e.getMessage());
 			// We have a validation failure. Invalid format.
 			return new InputValidationFailureResult(paramName, ERROR_INVLID_DATE_FORMAT);
 		}
@@ -78,10 +76,14 @@ public class InputValidator implements ValidationConstant {
 		return null;
 	}
 
-	private InputValidationFailureResult validateDestination(String paramName, String destination) {
+	private InputValidationFailureResult validateDestination(String paramName, String origin, String destination) {
 		if (!destination.matches(ORIGIN_AND_DESTINATION_REGEX)) {
 			// We have a validation failure. Wrong origin.
 			return new InputValidationFailureResult(paramName, ERROR_INVLID_DESTINATION);
+		}
+		if (origin.equals(destination)) {
+			// We have a validation failure. Destination same as origin.
+			return new InputValidationFailureResult(paramName, ERROR_SAME_ORIGIN_AND_DESTINATION);
 		}
 		// We're good!
 		return null;

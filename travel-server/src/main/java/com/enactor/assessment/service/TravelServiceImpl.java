@@ -182,6 +182,7 @@ public class TravelServiceImpl implements TravelService, TravelConstants {
 			JourneyType journeyType) {
 		ReservationOutBoundDto reservationOutBound = new ReservationOutBoundDto();
 		// populate data for reservation
+		reservationOutBound.setSuccess(true);
 		reservationOutBound.setOrigin(availabilityInbound.getOrigin());
 		reservationOutBound.setDestination(availabilityInbound.getDestination());
 		reservationOutBound.setPassengers(availabilityInbound.getPassengers());

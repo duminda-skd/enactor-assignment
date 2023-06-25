@@ -2,6 +2,7 @@ package com.enactor.assessment.controller;
 
 import com.enactor.assessment.dto.AvailabilityOutBoundDto;
 import com.enactor.assessment.dto.ReservationOutBoundDto;
+import com.enactor.assessment.dto.ValidationResult;
 import com.enactor.assessment.dto.AvailabilityInboundDto;
 import com.enactor.assessment.service.TravelService;
 import com.enactor.assessment.service.TravelServiceImpl;
@@ -15,8 +16,15 @@ public class TravelController {
 	InputValidator inputValidator = new InputValidator();
 
 	public String checkAvailability(AvailabilityInboundDto availabilityInbound) throws JsonProcessingException {
-		inputValidator.validateCheckAvailabilityInput(availabilityInbound);
-		AvailabilityOutBoundDto availability = travelService.checkAvailability(availabilityInbound);
+		ValidationResult validationResult = inputValidator.validateCheckAvailabilityInput(availabilityInbound);
+		AvailabilityOutBoundDto availability;
+		if (validationResult.isValidationFailed()) {
+			availability = new AvailabilityOutBoundDto();
+			availability.setSuccess(false);
+			availability.setErrorMessage(validationResult.getErrorMessage());
+		} else {
+			availability = travelService.checkAvailability(availabilityInbound);
+		}
 		String availabilityResponse = GenericUtil.objectToJson(availability);
 		return availabilityResponse;
 	}

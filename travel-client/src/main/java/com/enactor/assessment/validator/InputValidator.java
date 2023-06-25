@@ -26,7 +26,7 @@ public class InputValidator implements ValidationConstant {
 			validationFailures.add(originValidationResult);
 		}
 		InputValidationFailureResult destinationValidationResult = validateDestination(PARAM_DESTINATION,
-				availabilityParams.get(PARAM_DESTINATION));
+				availabilityParams.get(PARAM_ORIGIN), availabilityParams.get(PARAM_DESTINATION));
 		if (destinationValidationResult != null) {
 			validationFailures.add(destinationValidationResult);
 		}
@@ -69,10 +69,14 @@ public class InputValidator implements ValidationConstant {
 		return null;
 	}
 
-	private InputValidationFailureResult validateDestination(String paramName, String destination) {
+	private InputValidationFailureResult validateDestination(String paramName, String origin, String destination) {
 		if (!destination.matches(ORIGIN_AND_DESTINATION_REGEX)) {
 			// We have a validation failure. Wrong origin.
 			return new InputValidationFailureResult(paramName, ERROR_INVLID_DESTINATION);
+		}
+		if (origin.equals(destination)) {
+			// We have a validation failure. Destination same as origin.
+			return new InputValidationFailureResult(paramName, ERROR_SAME_ORIGIN_AND_DESTINATION);
 		}
 		// We're good!
 		return null;

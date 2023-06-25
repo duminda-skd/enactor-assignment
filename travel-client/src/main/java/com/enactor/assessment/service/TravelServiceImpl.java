@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import com.enactor.assessment.constant.AvailabilityAndReservationConstants;
 import com.enactor.assessment.dto.AvailabilityDto;
-import com.enactor.assessment.dto.ReservationOutBoundDto;
+import com.enactor.assessment.dto.ReservationDto;
 import com.enactor.assessment.util.JsonBodyHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,6 @@ public class TravelServiceImpl implements TravelService, AvailabilityAndReservat
 	@Override
 	public AvailabilityDto doAvailabilityCheck(Map<String, String> availabilityParams) {
 		String urlWithParams = getModifiedUrlWithParams(availabilityParams);
-		System.out.println("url with params: " + urlWithParams);
 		AvailabilityDto response = null;
 		try {
 			URI targetURI = new URI(urlWithParams);
@@ -33,14 +32,15 @@ public class TravelServiceImpl implements TravelService, AvailabilityAndReservat
 			response = HttpClient.newHttpClient()
 					.send(httpRequest, new JsonBodyHandler<AvailabilityDto>(AvailabilityDto.class))
 					.body();
-			System.out.println("response: " + response);
 			return response;
 		} catch (IOException | InterruptedException | URISyntaxException ex) {
-			// ex.printStackTrace();
+			 ex.printStackTrace();
 			System.out.println(ERROR_PROCESSING_REQUEST);
-			return new AvailabilityDto();
+			return getErrorneousAvailabilityResponse();
 		}
 	}
+
+	
 
 	private String getModifiedUrlWithParams(Map<String, String> availabilityParams) {
 		String getParams = availabilityParams.keySet().stream().map(key -> key + '=' + availabilityParams.get(key))
@@ -50,11 +50,11 @@ public class TravelServiceImpl implements TravelService, AvailabilityAndReservat
 	}
 
 	@Override
-	public void doTicketReserve(Map<String, String> availabilityParams) {
+	public ReservationDto doTicketReserve(Map<String, String> availabilityParams) {
 		String payloadJson = getPostRequestPayloadData(availabilityParams);
 		if (payloadJson == null) {
 			System.out.println(ERROR_PROCESSING_REQUEST);
-			return;
+			return getErrorneousReservationResponse();
 		}
 		
 		try {
@@ -63,16 +63,17 @@ public class TravelServiceImpl implements TravelService, AvailabilityAndReservat
 					.header("Content-Type", "application/json")
 					.POST(BodyPublishers.ofString(payloadJson))
 					.build();
-			ReservationOutBoundDto response = HttpClient.newHttpClient()
-					.send(httpRequest, new JsonBodyHandler<ReservationOutBoundDto>(ReservationOutBoundDto.class))
+			ReservationDto response = HttpClient.newHttpClient()
+					.send(httpRequest, new JsonBodyHandler<ReservationDto>(ReservationDto.class))
 					.body();
-			System.out.println(response);
+			return response;
 		} catch (IOException | InterruptedException | URISyntaxException ex) {
-//			e.printStackTrace();
+			ex.printStackTrace();
 			System.out.println(ERROR_PROCESSING_REQUEST);
+			return getErrorneousReservationResponse();
 		}
 	}
-
+	
 	private String getPostRequestPayloadData(Map<String, String> availabilityParams) {
 		String payloadJson = null;
 		try {
@@ -81,5 +82,19 @@ public class TravelServiceImpl implements TravelService, AvailabilityAndReservat
 			// ex.printStackTrace();
 		}
 		return payloadJson;
+	}
+	
+	private AvailabilityDto getErrorneousAvailabilityResponse() {
+		AvailabilityDto response = new AvailabilityDto();
+		response.setSuccess(false);
+		response.setErrorMessage(INTERNAL_SERVER_ERROR);
+		return null;
+	}
+
+	private ReservationDto getErrorneousReservationResponse() {
+		ReservationDto response = new ReservationDto();
+		response.setSuccess(false);
+		response.setErrorMessage(INTERNAL_SERVER_ERROR);
+		return response;
 	}
 }
