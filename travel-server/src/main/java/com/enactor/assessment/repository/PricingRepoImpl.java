@@ -12,10 +12,8 @@ public class PricingRepoImpl implements PricingRepo {
 		Map<Set<String>, Double> pricingMap = PricingMapGenerator.getPricingMap();
 		// create key to get pricing
 		Set<String> key = Set.of(origin, destination);
-		System.out.println("generated key: " + key);
 		// get price by generated key
 		Double price = pricingMap.get(key);
-		System.out.println("price: " + price);
 		return price;
 	}
 }

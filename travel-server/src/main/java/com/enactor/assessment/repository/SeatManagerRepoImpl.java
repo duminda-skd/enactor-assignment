@@ -12,8 +12,8 @@ public class SeatManagerRepoImpl {
 	private SeatManagerRepoImpl() { }
 
 	private static class SeatManagerRepoHolder {
-		private static Map<String, SeatInfo> seatInfoMap = new ConcurrentHashMap();
-		private static Map<String, ReservationOutBoundDto> bookings = new HashMap();
+		private static Map<String, SeatInfo> seatInfoMap = new ConcurrentHashMap<>();
+		private static Map<String, ReservationOutBoundDto> bookings = new HashMap<>();
 	}
 	
 	public static SeatInfo getSeatInfoByDate(String date) {

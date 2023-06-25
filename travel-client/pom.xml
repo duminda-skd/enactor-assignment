@@ -15,16 +15,32 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<project.build.directory>/home/duminda/workspace/assessments/enactor-assessment/target</project.build.directory>
 		<project.build.finalName>travel-client</project.build.finalName>
+		<junit.jupiter.version>5.9.1</junit.jupiter.version>
 	</properties>
 
 
 	<dependencies>
+		<!-- junit dependendencies -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Hamcrest Matchers -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>2.2</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Jackson dependencies -->
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
@@ -76,6 +92,12 @@
 					</execution>
 				</executions>
 
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
 			</plugin>
 
 		</plugins>

@@ -71,6 +71,7 @@ public class TravelServiceImpl implements TravelService, TravelConstants {
 			currentBookedSeats = journeyType.equals(JourneyType.DEPARTURE_JOURNEY)
 					? seatInfo.getDepartureJourneyBookedSeats()
 					: seatInfo.getArrivalJourneyBookedSeats();
+			System.out.println("current booked seats: " +  currentBookedSeats);
 		} finally {
 			lock.readLock().unlock();
 		}
