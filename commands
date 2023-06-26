@@ -1,9 +1,0 @@
-mvn clean package
-java -jar target/travel-client-jar-with-dependencies.jar
-
-mvn clean package
-mvn package cargo:run
-
-./bin/startup.sh
-./bin/shutdown.sh
-tail -f logs/catalina.out

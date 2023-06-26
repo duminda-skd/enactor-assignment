@@ -9,7 +9,6 @@ public interface MainFlowConstant {
 	String MESSAGE_RESERVATION_ERROR = "Reservation is not successful. Please try again.";
 	String MESSAGE_RESERVATION_SUCCESS = "Reservation is successful. Following are the details.";
 	
-	
 	String RESERVATION_REFERENCE = "Reservation Reference Number: ";
 	String RESERVATION_ORIGIN = "Origin: ";
 	String RESERVATION_DESTINATION = "Destination: ";
@@ -17,4 +16,7 @@ public interface MainFlowConstant {
 	String RESERVATION_JOURNEY_TIME = "Journey Time: ";
 	String RESERVATION_PRICE = "Price: ";
 	String RESERVATION_SEAT_LIST = "Seat List: ";
+	
+	String SIMULATED_CLIENT_PREFIX = "simulated-client-";
+	String SEPARATOR = " : ";
 }

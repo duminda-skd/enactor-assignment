@@ -1,8 +1,5 @@
 package com.enactor.assessment;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -50,7 +47,7 @@ public class ThreadedSimulation implements Runnable, MainFlowConstant {
 		// running threads for the number of simulated users
 		CountDownLatch latch = new CountDownLatch(1);
 		IntStream.range(0, numberOfUsers).forEach(num -> {
-			Thread myThread = new Thread(new ThreadedSimulation(latch, availabilityParams), "simulated-client-" + num);
+			Thread myThread = new Thread(new ThreadedSimulation(latch, availabilityParams), SIMULATED_CLIENT_PREFIX + num);
 			myThread.start();
 		});
 		latch.countDown();
@@ -83,14 +80,14 @@ public class ThreadedSimulation implements Runnable, MainFlowConstant {
 	private void printReservationData(ReservationDto reservation) {
 		if (reservation.isSuccess()) {
 			System.out.println("--------------------------------------------------------");
-			System.out.println(Thread.currentThread().getName() + ":" + MESSAGE_RESERVATION_SUCCESS);
-			System.out.println(Thread.currentThread().getName() + ":" + RESERVATION_REFERENCE + reservation.getBookingReferece());
-			System.out.println(Thread.currentThread().getName() + ":" + RESERVATION_ORIGIN + reservation.getOrigin());
-			System.out.println(Thread.currentThread().getName() + ":" + RESERVATION_DESTINATION + reservation.getDestination());
-			System.out.println(Thread.currentThread().getName() + ":" + RESERVATION_JOURNEY_DATE + reservation.getJourneyDate());
-			System.out.println(Thread.currentThread().getName() + ":" + RESERVATION_JOURNEY_TIME + reservation.getJourneyStartTime());
-			System.out.println(Thread.currentThread().getName() + ":" + RESERVATION_PRICE + reservation.getPrice());
-			System.out.println(Thread.currentThread().getName() + ":" + RESERVATION_SEAT_LIST + reservation.getSeatList());
+			System.out.println(Thread.currentThread().getName() + SEPARATOR + MESSAGE_RESERVATION_SUCCESS);
+			System.out.println(Thread.currentThread().getName() + SEPARATOR + RESERVATION_REFERENCE + reservation.getBookingReferece());
+			System.out.println(Thread.currentThread().getName() + SEPARATOR + RESERVATION_ORIGIN + reservation.getOrigin());
+			System.out.println(Thread.currentThread().getName() + SEPARATOR + RESERVATION_DESTINATION + reservation.getDestination());
+			System.out.println(Thread.currentThread().getName() + SEPARATOR + RESERVATION_JOURNEY_DATE + reservation.getJourneyDate());
+			System.out.println(Thread.currentThread().getName() + SEPARATOR + RESERVATION_JOURNEY_TIME + reservation.getJourneyStartTime());
+			System.out.println(Thread.currentThread().getName() + SEPARATOR + RESERVATION_PRICE + reservation.getPrice());
+			System.out.println(Thread.currentThread().getName() + SEPARATOR + RESERVATION_SEAT_LIST + reservation.getSeatList());
 			System.out.println("--------------------------------------------------------");
 		} else {
 			System.out.println("--------------------------------------------------------");
