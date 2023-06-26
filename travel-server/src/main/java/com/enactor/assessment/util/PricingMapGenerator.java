@@ -9,7 +9,7 @@ public class PricingMapGenerator {
 	private PricingMapGenerator() { }
 
 	private static class PricingMapGeneratorHolder {
-		private static Map<Set<String>, Double> pricingMap = new HashMap();
+		private static Map<Set<String>, Double> pricingMap = new HashMap<>();
 
 		// Defining unique destination combinations (order shouldn't matter here)
 		private static final Set<String> AB = Set.of("A", "B");
