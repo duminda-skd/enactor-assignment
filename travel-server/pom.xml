@@ -85,7 +85,7 @@
 							<type>war</type>
 							<location>${project.build.directory}/${project.build.finalName}.war</location>
 							<properties>
-								<context>/enactor-assessment</context>
+								<context>/travel-server</context>
 							</properties>
 						</deployable>
 					</deployables>
