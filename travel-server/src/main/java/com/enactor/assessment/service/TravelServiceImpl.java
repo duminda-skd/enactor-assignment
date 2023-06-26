@@ -112,7 +112,7 @@ public class TravelServiceImpl implements TravelService, TravelConstants {
 	private List<String> blockDepartureJourney(SeatInfo seatInfo, int requestedSeats) {
 		System.out.println("Current seats booked for departure journey: " + seatInfo.getDepartureJourneyBookedSeats());
 
-		List<String> seatsList = new ArrayList();
+		List<String> seatsList = new ArrayList<>();
 
 		ReadWriteLock lock = seatInfo.getLock();
 		lock.writeLock().lock();
@@ -144,7 +144,7 @@ public class TravelServiceImpl implements TravelService, TravelConstants {
 		System.out.println(
 				"Current from journey seats booked for arrival journey: " + seatInfo.getArrivalJourneyBookedSeats());
 
-		List<String> seatsList = new ArrayList();
+		List<String> seatsList = new ArrayList<>();
 
 		ReadWriteLock lock = seatInfo.getLock();
 		lock.writeLock().lock();

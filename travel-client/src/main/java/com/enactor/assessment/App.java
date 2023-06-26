@@ -1,21 +1,18 @@
 package com.enactor.assessment;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.stream.IntStream;
+import com.enactor.assessment.dto.RunSimulationResponse;
+import com.enactor.assessment.service.InputService;
+import com.enactor.assessment.service.InputServiceImpl;
 
 public class App {
 
 	public static void main(String[] args) {
-		final int numberOfUsers = 6;
-		CountDownLatch latch = new CountDownLatch(1);
-
-		IntStream.range(0, numberOfUsers).forEach(num -> {
-			Thread myThread = new Thread(new ThreadedSimulation(latch), "my-thread-"+num);
-			myThread.start();
-		});
-		
-		latch.countDown();
-		
-//		new MainFlow().start(false, null);
+		InputService inputService = new InputServiceImpl();
+		RunSimulationResponse userResponse = inputService.evalRunSimulation();
+		if (userResponse.isSimulationRun()) {
+			new ThreadedSimulation().runSimulation(userResponse.getNumberOfUsers());
+		} else {
+			new MainFlow().startNormalFlow();
+		}
 	}
 }

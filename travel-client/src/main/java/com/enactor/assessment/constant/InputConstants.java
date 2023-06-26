@@ -13,9 +13,9 @@ public interface InputConstants {
 	String PARAM_DESTINATION = "destination";
 	String PARAM_PASSENGERS = "passengers";
 
-	String PROMPT_TERMINATION = "Do you wish to entertain the availability service again or do you wish to quit?"
-			+ " Enter 'q' to quit any other character for try availability service again";
-	String QUIT_FLAG = "q";
+	String PROMPT_RUN_SIMULATION = "If you wish to run simulation enter s. To run normal flow enter any other key";
+	String RUN_SIMULATION_FLAG = "s";
+	String PROMPT_SIMULATION_USERS = "How many users do you want to simulate bookings for?";
 
 	String PROMPT_USER_CONFIRMATION = "Do you wish to continue to reservation with above info?"
 			+ " Enter 'y' to confirm any other character for try availability service again";

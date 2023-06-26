@@ -2,7 +2,6 @@ package com.enactor.assessment;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 import com.enactor.assessment.constant.MainFlowConstant;
 import com.enactor.assessment.dto.AvailabilityDto;
@@ -15,17 +14,15 @@ import com.enactor.assessment.service.TravelServiceImpl;
 import com.enactor.assessment.validator.InputValidator;
 
 public class MainFlow implements MainFlowConstant {
-
-	public void start(boolean isSimulation, Map<String, String> availabilityParams) {
+	
+	public void startNormalFlow() {
 		// working on getting availability input
 		InputService inputService = new InputServiceImpl();
-		if (!isSimulation) {
-			availabilityParams = inputService.getAvailabilityInput();
-		}
+		Map<String, String> availabilityParams =  inputService.getAvailabilityInput();
 		// do validation
 		doValidation(availabilityParams);
 		// working on checking availability
-		doAvailabilityCheckAndReservation(isSimulation, inputService, availabilityParams);
+		doAvailabilityCheckAndReservation(inputService, availabilityParams);
 	}
 
 	private void doValidation(Map<String, String> availabilityParams) {
@@ -39,19 +36,14 @@ public class MainFlow implements MainFlowConstant {
 		}
 	}
 
-	private void doAvailabilityCheckAndReservation(boolean isSimulation, InputService inputService,
+	private void doAvailabilityCheckAndReservation(InputService inputService,
 			Map<String, String> availabilityParams) {
 		TravelService travelService = new TravelServiceImpl();
 		AvailabilityDto availabilityCheck = travelService.doAvailabilityCheck(availabilityParams);
 		if (availabilityCheck.isSuccess()) {
 			System.out.println(MESSAGE_AVAILABILITY_CHECK_SUCCESS);
 			// get user confirmation (unless this is a simulation - in that case we can just consider it's true)
-			boolean userConfirmed = false;
-			if (isSimulation) {
-				userConfirmed = true;
-			} else {
-				userConfirmed = inputService.getUserConfirmationForReservation();
-			}
+			boolean userConfirmed = inputService.getUserConfirmationForReservation();
 			// evaluation user confirmation to proceed
 			if (userConfirmed) {
 				ReservationDto reservation = travelService.doTicketReserve(availabilityParams);

@@ -13,7 +13,7 @@ import com.enactor.assessment.dto.InputValidationFailureResult;
 public class InputValidator implements ValidationConstant {
 
 	public List<InputValidationFailureResult> validateCheckAvailabilityInput(Map<String, String> availabilityParams) {
-		List<InputValidationFailureResult> validationFailures = new ArrayList<InputValidationFailureResult>();
+		List<InputValidationFailureResult> validationFailures = new ArrayList<>();
 		// check and add to list if not null (not null means validation failure)
 		InputValidationFailureResult dateValidationResult = validateDate(PARAM_DATE,
 				availabilityParams.get(PARAM_DATE));
